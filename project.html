@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project Management System</title>
+    <link rel="stylesheet" type="text/css" href="project.css"> <!-- Include a CSS file for styling -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> <!-- For AJAX -->
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="#">Project Management System</a></li>
+            <li><a href="./user.html">User Registration and Login</a></li>
+        </ul>
+    </nav>
+
+    <h1>Project Management System</h1>
+    
+    <!-- Add a new project -->
+    <h2>Add a New Project</h2>
+    <form method="POST" action="add_project.php">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required>
+        
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" required></textarea>
+        
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" required>
+        
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" required>
+        
+        <label for="phase">Phase:</label>
+        <input type="text" id="phase" name="phase" required>
+        
+        <button type="submit">Add Project</button>
+    </form>
+
+    <!-- Section to list existing projects -->
+    <h2>Existing Projects</h2>
+    <button id="fetch-projects">Fetch Projects</button> <!-- Button to fetch projects -->
+    <ul id="project-list"> <!-- Where projects will be displayed --></ul>
+
+    <!-- Update an existing project -->
+    <h2>Update Project</h2>
+    <form method="POST" action="update_project.php">
+        <label for="pid">Project ID to update:</label>
+        <input type="text" id="pid" name="pid" required>
+
+        <label for="title">New Title:</label>
+        <input type="text" id="title" name="title">
+        
+        <label for="description">New Description:</label>
+        <textarea id="description" name="description"></textarea>
+        
+        <label for="start_date">New Start Date:</label>
+        <input type="date" id="start_date" name="start_date">
+        
+        <label for="end_date">New End Date:</label>
+        <input date="date" id="end_date" name="end_date">
+        
+        <label for="phase">New Phase:</label>
+        <input type="text" id="phase" name="phase">
+        
+        <button type="submit">Update Project</button>
+    </form>
+
+    <!-- Search for projects -->
+    <h2>Search Projects</h2>
+    <form method="GET" action="search_projects.php">
+        <label for="search">Search by title or start date:</label>
+        <input type="text" id="search" name="search">
+        <button type="submit">Search</button>
+    </form>
+
+    <!-- JavaScript to fetch projects -->
+    <script>
+    $(document).ready(function() {
+        // Fetch projects when the button is clicked
+        $("#fetch-projects").click(function() {
+            // AJAX call to fetch projects
+            $.ajax({
+                url: "list_projects.php",
+                type: "GET",
+                success: function(response) {
+                    $("#project-list").empty(); // Clear existing content
+
+                    var projects = JSON.parse(response); // Parse the JSON response
+
+                    if (projects.length > 0) {
+                        // Create an unordered list of projects
+                        var ul = $("<ul></ul>");
+
+                        projects.forEach(function(project) {
+                            var li = $("<li></li>");
+                            li.append("<a href='view_project.php?pid=" + project.pid + "'>" + project.title + "</a>"); // Link to view project details
+                            ul.append(li); // Add to the list
+                        });
+
+                        $("#project-list").append(ul); // Add the list to the DOM
+                    } else {
+                        $("#project-list").append("No projects found.");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $("#project-list").append("An error occurred while fetching projects.");
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>
